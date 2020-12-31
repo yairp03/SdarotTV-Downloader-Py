@@ -12,7 +12,9 @@ from printer import log
 class Series:
     def __init__(self, first_episode_url):
         log("Creating Driver...", end="")
-        self.driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument("headless")
+        self.driver = webdriver.Chrome(options=options)
         print("Done.")
         log("Extracting series url from given url...", end="")
         self.series_url = self.extract_series_url(first_episode_url)
