@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import filedialog
 from series import Series
 from printer import log
+from _utils import get_chrome_version
+from shutil import copyfile
 
 EXIT = "exit"
 
@@ -11,17 +13,18 @@ DL_SEASON = 2
 DL_SERIES = 3
 CHANGE_SERIES = 4
 
+URL_MESSAGE = f"Enter the url of the first episode (something like https://sdarot.space/watch/$series$/season/1/episode/1):\n(Enter '{EXIT}' to exit)\n"
+DRIVER_NAME = 'chromedriver.exe'
 
 def main():
     print("Hi! Welcome to the Sdarot TV Downloader.")
-    while (
-            first_episode_url := input(
-                f"Enter the url of the first episode (something like https://sdarot.space/watch/$series$/season/1/episode/1):\n(Enter '{EXIT}' to exit)\n"
-            )
-    ) != EXIT:
+    first_episode_url = input(URL_MESSAGE)
+    while first_episode_url != EXIT:
+        initialize_driver()
         series = Series(first_episode_url)
         print_menu()
-        while (choice := take_choice(DL_EPISODE, CHANGE_SERIES)) != CHANGE_SERIES:
+        choice = take_choice(DL_EPISODE, CHANGE_SERIES)
+        while choice != CHANGE_SERIES:
             if choice == DL_EPISODE:
                 download_episode(series)
             elif choice == DL_SEASON:
@@ -29,7 +32,9 @@ def main():
             elif choice == DL_SERIES:
                 download_series(series)
             print_menu()
+            choice = take_choice(DL_EPISODE, CHANGE_SERIES)
         series.driver.quit()
+        first_episode_url = input(URL_MESSAGE)
 
 
 def print_menu():
@@ -77,7 +82,7 @@ def download_season(series, season=0, location=None):
 def download_series(series):
     location = select_folder()
     for season in range(1, series.seasons_amount + 1):
-        new_location = location + f'/Season{season}'
+        new_location = location + f"/Season{season}"
         create_dir(new_location)
         download_season(series, season, new_location)
 
@@ -100,6 +105,17 @@ def create_dir(path):
         log(f"Creation of the directory {path} failed.")
     else:
         log(f"Successfully created the directory {path}.")
+
+
+def initialize_driver():  
+    log('Checking Chrome version...', end='')
+    chrome_version = get_chrome_version()
+    print(f'Done. Chrome version is: {chrome_version}')
+    src_driver = f"chromedrivers/{chrome_version.split('.')[0]}.exe"
+    log("Getting the right driver...")
+    log(f"Copying from {src_driver} to {DRIVER_NAME}...", end='')
+    copyfile(src_driver, DRIVER_NAME)
+    print('Done.')
 
 
 if __name__ == "__main__":
