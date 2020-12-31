@@ -74,7 +74,7 @@ class Series:
         self.navigate(self.wrap_episode(season, episode))
         print("Done.")
 
-        log("Finding and clicking the proceed button...")
+        log("Finding and clicking the proceed button (might take about 30 seconds)...")
         tries_left = 5
         while True:
             try:
