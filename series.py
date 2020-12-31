@@ -73,11 +73,16 @@ class Series:
         print("Done.")
 
         log("Finding and clicking the proceed button...")
+        tries_left = 5
         while True:
             try:
+                tries_left -= 1
                 WebDriverWait(self.driver, 40).until(ec.element_to_be_clickable((By.ID, "proceed")))
             except TimeoutException:
-                log("Error. Refreshing...")
+                if tries_left == 0:
+                    log("Time out. Skipping this episode.")
+                    return
+                log(f"Error. Trying again {tries_left} more times. Refreshing...")
                 self.driver.execute_script("location.reload(true);")
             else:
                 break
