@@ -1,6 +1,6 @@
 import requests
-from printer import log
 from win32com.client import Dispatch
+from datetime import datetime
 
 
 def download_episode(location, url, cookies):
@@ -27,3 +27,7 @@ def get_chrome_version():
     paths = [r"C:\Program Files\Google\Chrome\Application\chrome.exe",
              r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"]
     return list(filter(None, [get_version_via_com(p) for p in paths]))[0]
+
+
+def log(s, end='\n'):
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {s}", flush=True, end=end)

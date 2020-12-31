@@ -6,8 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from _utils import download_episode
-from printer import log
+from _utils import download_episode, log
 
 class Series:
     def __init__(self, first_episode_url):
