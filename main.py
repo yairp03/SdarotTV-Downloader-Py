@@ -5,8 +5,8 @@ from series import Series
 from _utils import get_chrome_version, log
 from shutil import copyfile
 
-HOME_PATH = os.environ['HOMEPATH']
-DEFAULT_DIR = HOME_PATH + "\\Downloads"
+HOME_PATH = os.environ['HOMEPATH'].replace('\\', '/')
+DEFAULT_DIR = HOME_PATH + "/Downloads"
 
 EXIT = "exit"
 
@@ -94,14 +94,14 @@ def select_folder():
     root.withdraw()
     log("Choosing directory...", end="")
     location = filedialog.askdirectory(
-        parent=root, initialdir="/", title="Please select a directory to download to"
+        parent=root, initialdir=HOME_PATH, title="Please select a directory to download to"
     )
     if location != '':
         print(f"Done.\nFolder: {location}")
         return location
     else:
         print(f"Canceled. Choosing default directory: {DEFAULT_DIR}")
-        return DEFAULT_DIR.replace('\\', '/')
+        return DEFAULT_DIR
 
 
 def create_dir(path):
