@@ -2,7 +2,7 @@ import os  # for environment variable %HOMEPATH% and mkdir
 import tkinter as tk
 from tkinter import filedialog
 from series import Series
-from _utils import get_chrome_version, log
+from _utils import get_chrome_version, log, clear
 from shutil import copyfile
 
 HOME_PATH = os.environ['HOMEPATH'].replace('\\', '/')
@@ -19,6 +19,7 @@ URL_MESSAGE = f"Enter the url of the first episode (something like https://sdaro
 DRIVER_NAME = 'chromedriver.exe'
 
 def main():
+    clear()
     print("Hi! Welcome to the Sdarot TV Downloader.")
     first_episode_url = input(URL_MESSAGE)
     while first_episode_url != EXIT:

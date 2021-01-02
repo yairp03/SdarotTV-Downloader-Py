@@ -1,6 +1,7 @@
 import requests
 from win32com.client import Dispatch
 from datetime import datetime
+import os
 
 
 def download_episode(location, url, cookies):
@@ -31,3 +32,7 @@ def get_chrome_version():
 
 def log(s, end='\n'):
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {s}", flush=True, end=end)
+
+
+def clear():
+    os.system("cls")
