@@ -18,14 +18,13 @@ DL_SEASON = 2
 DL_SERIES = 3
 CHANGE_SERIES = 4
 
-URL_MESSAGE = f"Enter the url of the first episode\n(something like https://sdarot.space/watch/$series$/season/1/episode/1):\n(Enter '{EXIT}' to exit)"
+URL_MESSAGE = f"Enter the url of the first episode\n(something like https://sdarot.space/watch/$series$/season/1/episode/1):"
 URL_REGEX_PATTERN = r'https?:\/\/.+\/watch\/.*\/season\/[0-9]+\/episode\/[0-9]+'
 DRIVER_NAME = 'chromedriver.exe'
 MENU = """\
 1. Download episode
 2. Download season (might take a while)
-3. Download whole series (might take a while)
-4. Change series\n"""
+3. Download whole series (might take a while)\n"""
 
 def main():
     clear()
