@@ -4,6 +4,9 @@ from tkinter import filedialog
 from series import Series
 from _utils import get_chrome_version, log, clear
 from shutil import copyfile
+import easygui
+import re
+
 
 HOME_PATH = os.environ['HOMEPATH'].replace('\\', '/')
 DEFAULT_DIR = HOME_PATH + "/Downloads"
@@ -15,18 +18,27 @@ DL_SEASON = 2
 DL_SERIES = 3
 CHANGE_SERIES = 4
 
-URL_MESSAGE = f"Enter the url of the first episode (something like https://sdarot.space/watch/$series$/season/1/episode/1):\n(Enter '{EXIT}' to exit)\n"
+URL_MESSAGE = f"Enter the url of the first episode\n(something like https://sdarot.space/watch/$series$/season/1/episode/1):\n(Enter '{EXIT}' to exit)"
+URL_REGEX_PATTERN = r'https?:\/\/.+\/watch\/.*\/season\/[0-9]+\/episode\/[0-9]+'
 DRIVER_NAME = 'chromedriver.exe'
+MENU = """\
+1. Download episode
+2. Download season (might take a while)
+3. Download whole series (might take a while)
+4. Change series\n"""
 
 def main():
     clear()
-    print("Hi! Welcome to the Sdarot TV Downloader.")
-    first_episode_url = input(URL_MESSAGE)
-    while first_episode_url != EXIT:
+    while True:
+        print("Hi! Welcome to the Sdarot TV Downloader.")
+        first_episode_url = ''
+        while not re.findall(URL_REGEX_PATTERN, first_episode_url):
+            first_episode_url = easygui.enterbox(URL_MESSAGE)
+            if first_episode_url == None:
+                exit()
         initialize_driver()
         series = Series(first_episode_url)
-        print_menu()
-        choice = take_choice(DL_EPISODE, CHANGE_SERIES)
+        choice = take_choice(DL_EPISODE, CHANGE_SERIES, txt=MENU)
         while choice != CHANGE_SERIES:
             if choice == DL_EPISODE:
                 download_episode(series)
@@ -34,39 +46,26 @@ def main():
                 download_season(series)
             elif choice == DL_SERIES:
                 download_series(series)
-            print_menu()
-            choice = take_choice(DL_EPISODE, CHANGE_SERIES)
+            choice = take_choice(DL_EPISODE, CHANGE_SERIES, txt=MENU)
         series.driver.quit()
-        first_episode_url = input(URL_MESSAGE)
 
 
-def print_menu():
-    print(
-        """\
-1. Download episode
-2. Download season (might take a while)
-3. Download whole series (might take a while)
-4. Change series"""
-    )
-
-
-def take_choice(min_option, max_option):
-    choice = min_option - 1
-    while choice < min_option or choice > max_option:
-        try:
-            choice = int(input(f"Enter your choice ({min_option}-{max_option}): "))
-        except ValueError:
-            print("Not a valid Number")
-    return choice
+def take_choice(min_option, max_option, txt=''):
+    choice = str(min_option - 1)
+    while not (choice.isnumeric() and min_option <= int(choice) <= max_option):
+        choice = easygui.enterbox(txt + f"Enter your choice ({min_option}-{max_option}): ")
+        if choice == None:
+            exit()
+    return int(choice)
 
 
 def download_episode(series, season=0, episode=0, location=None):
     if season == 0:
-        print("Choose season:")
-        season = take_choice(1, series.seasons_amount)
+        season = take_choice(1, series.seasons_amount, txt="Choose season:\n")
+        log(f"Season selected: {season}")
     if episode == 0:
-        print("Choose episode:")
-        episode = take_choice(1, series.episodes_amount[season])
+        episode = take_choice(1, series.episodes_amount[season], txt="Choose episode:\n")
+        log(f"Episode selected: {episode}")
     if not location:
         location = select_folder()
     series.download_episode(season, episode, location + f"/s{season}e{episode}.mp4")
@@ -74,8 +73,8 @@ def download_episode(series, season=0, episode=0, location=None):
 
 def download_season(series, season=0, location=None):
     if season == 0:
-        print("Choose season:")
-        season = take_choice(1, series.seasons_amount)
+        season = take_choice(1, series.seasons_amount, txt="Choose season:\n")
+        log(f"Season chosed: {season}")
     if not location:
         location = select_folder()
     for episode in range(1, series.episodes_amount[season] + 1):
