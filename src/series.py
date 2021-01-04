@@ -8,27 +8,29 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from _utils import download_episode, log
 
+from consts.consts import VIDEO_HTML_ID
+
 class Series:
     def __init__(self, first_episode_url):
-        log("Creating Driver...", end="")
+        log("Creating Driver...")
         options = webdriver.ChromeOptions()
         options.add_argument("headless")
         self.driver = webdriver.Chrome(options=options)
-        print("Done.")
-        log("Extracting series url from given url...", end="")
+        log("Done.")
+        log("Extracting series url from given url...")
         self.series_url = self.extract_series_url(first_episode_url)
-        print("Done.\nSeries url is:", self.series_url)
+        log("Done. Series url is: " + self.series_url)
 
-        log("Extracting site url from given url...", end="")
+        log("Extracting site url from given url...")
         self.site_url = self.extract_site_url()
-        print("Done.\nSite url is:", self.site_url)
+        log("Done. Site url is: " + self.site_url)
 
-        log("Calculating amount of seasons...", end="")
+        log("Calculating amount of seasons...")
         self.seasons_amount = self.calculate_seasons_amount()
-        print(f"Done.\nThere are {self.seasons_amount} seasons.")
+        log(f"Done. There are {self.seasons_amount} seasons.")
 
         self.episodes_amount = {}
-        log("Calculating amount of episodes for each season:\n", end="")
+        log("Calculating amount of episodes for each season:")
         self.calculate_episodes_amount()
         log(f"Done.")
 
@@ -69,9 +71,9 @@ class Series:
         sleep(delay)
 
     def download_episode(self, season, episode, location):
-        log("Waiting for episode to load...", end="")
+        log("Waiting for episode to load...")
         self.navigate(self.wrap_episode(season, episode))
-        print("Done.")
+        log("Done.")
 
         log("Finding and clicking the proceed button (might take about 30 seconds)...")
         tries_left = 5
@@ -91,15 +93,15 @@ class Series:
         proceed_btn.click()
         log("Done.")
 
-        log("Finding Video...", end="")
-        video = self.driver.find_element_by_id("videojs_html5_api")
+        log("Finding Video...")
+        video = self.driver.find_element_by_id(VIDEO_HTML_ID)
         url = video.get_attribute("src")
-        print(f"Done.\nUrl is: {url}")
+        log(f"Done. Url is: {url}")
 
-        log("Getting cookies...", end="")
+        log("Getting cookies...")
         cookies_dict = {}
         for cookie in self.driver.get_cookies():
             cookies_dict[cookie["name"]] = cookie["value"]
-        print("Done.\nResults:", cookies_dict)
+        log("Done. Results: " + str(cookies_dict))
 
         download_episode(location, url, cookies_dict)

@@ -2,6 +2,10 @@ import requests
 from win32com.client import Dispatch
 from datetime import datetime
 import os
+import tkinter as tk
+from tkinter import filedialog
+from consts.strings import *
+from consts.consts import *
 
 
 def download_episode(location, url, cookies):
@@ -36,3 +40,31 @@ def log(s, end='\n'):
 
 def clear():
     os.system("cls")
+
+
+def create_dir(path):
+    try:
+        os.mkdir(path)
+    except OSError:
+        log(f"Creation of the directory {path} failed.")
+    else:
+        log(f"Successfully created the directory {path}.")
+
+
+def select_folder():
+    root = tk.Tk()
+    root.withdraw()
+    log("Choosing directory...")
+    location = filedialog.askdirectory(
+        parent=root, initialdir=HOME_PATH, title=CHOOSE_DIR
+    )
+    if location != '':
+        log(f"Done. Folder: {location}")
+        return location
+    else:
+        log(f"Canceled. Choosing default directory: {DEFAULT_DIR}")
+        return DEFAULT_DIR
+
+
+def hebrew_string(s):
+    return '\n'.join([' '.join(i.split(' ')[::-1]) for i in s.split('\n')])
