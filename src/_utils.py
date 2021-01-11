@@ -11,12 +11,11 @@ from consts.consts import *
 def download_episode(location, url, cookies):
     print("Location to download in: ", location)
     log("Downloading...")
-    r = requests.get(url, cookies=cookies)
-    f = open(location, "wb")
-    for chunk in r.iter_content(chunk_size=255):
-        if chunk:  # filter out keep-alive new chunks
-            f.write(chunk)
-    f.close()
+    with requests.get(url, cookies=cookies, stream=True) as r:
+        r.raise_for_status()
+        with open(location, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192): 
+                f.write(chunk)
     log('Done.')
 
 
