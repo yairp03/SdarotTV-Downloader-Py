@@ -11,12 +11,16 @@ from consts.consts import *
 def download_episode(location, url, cookies):
     print("Location to download in: ", location)
     log("Downloading...")
-    with requests.get(url, cookies=cookies, stream=True) as r:
-        r.raise_for_status()
-        with open(location, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192): 
-                f.write(chunk)
-    log('Done.')
+    try:
+        with requests.get(url, cookies=cookies, stream=True) as r:
+            r.raise_for_status()
+            with open(location, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192): 
+                    f.write(chunk)
+    except:
+        log("Download failed. Try again.")
+    else:
+        log('Done.')
 
 
 def get_version_via_com(filename):
