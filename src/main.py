@@ -14,7 +14,7 @@ def main():
         print(WELCOME_MESSAGE)
         first_episode_url = ''
         while not re.findall(URL_REGEX_PATTERN, first_episode_url):
-            first_episode_url = easygui.enterbox(hebrew_string(URL_MESSAGE))
+            first_episode_url = easygui.enterbox(hebrew_string(URL_MESSAGE)).strip()
             if first_episode_url == None:
                 exit()
         initialize_driver()
@@ -34,7 +34,7 @@ def main():
 def take_choice(min_option, max_option, txt=''):
     choice = str(min_option - 1)
     while not (choice.isnumeric() and min_option <= int(choice) <= max_option):
-        choice = easygui.enterbox(hebrew_string(txt) + f"Enter your choice ({min_option}-{max_option}): ")
+        choice = easygui.enterbox(hebrew_string(txt) + f"Enter your choice ({min_option}-{max_option}): ").strip()
         if choice == None:
             exit()
     return int(choice)
