@@ -6,20 +6,26 @@ import tkinter as tk
 from tkinter import filedialog
 from consts.strings import *
 from consts.consts import *
+import sys
 
 
 def download_episode(location, url, cookies):
-    print("Location to download in: ", location)
-    log("Downloading...")
+    log("Location to download in: " + location)
+    file_size = int(requests.head(url, cookies=cookies).headers['Content-Length'])
+    log("File size: " + str(int(file_size / MB)) + "MB")
+    downloaded = 0
+    startProgress("Downloading")
     try:
         with requests.get(url, cookies=cookies, stream=True) as r:
             r.raise_for_status()
             with open(location, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192): 
-                    f.write(chunk)
+                    downloaded += f.write(chunk)
+                    progress(downloaded / file_size * 100)
     except:
         log("Download failed. Try again.")
     else:
+        endProgress()
         log('Done.')
 
 
@@ -71,3 +77,20 @@ def select_folder():
 
 def hebrew_string(s):
     return '\n'.join([' '.join(i.split(' ')[::-1]) for i in s.split('\n')])
+
+def startProgress(title):
+    global progress_x
+    sys.stdout.write(title + ": [" + "-"*40 + "]" + chr(8)*41)
+    sys.stdout.flush()
+    progress_x = 0
+
+def progress(x):
+    global progress_x
+    x = int(x * 40 // 100)
+    sys.stdout.write("#" * (x - progress_x))
+    sys.stdout.flush()
+    progress_x = x
+
+def endProgress():
+    sys.stdout.write("#" * (40 - progress_x) + "]\n")
+    sys.stdout.flush()

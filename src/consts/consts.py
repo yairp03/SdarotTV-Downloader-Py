@@ -12,3 +12,5 @@ URL_REGEX_PATTERN = r'https?:\/\/.+\/watch\/.*\/season\/[0-9]+\/episode\/[0-9]+'
 DRIVER_NAME = 'chromedriver.exe'
 
 VIDEO_HTML_ID = "videojs_html5_api"
+
+MB = 1_000_000
