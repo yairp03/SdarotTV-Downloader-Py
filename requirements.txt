@@ -1,4 +1,4 @@
 selenium ~= 3.141.0
 requests ~= 2.25.1
-pywin32 ~= 300
+pywin32
 easygui ~= 0.98.1

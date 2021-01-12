@@ -77,6 +77,7 @@ class Series:
         
         log("Finding series name...")
         self.series_name = self.find_series_name()
+        log("Done. Series name is: " + self.series_name)
         
         log("Calculating amount of seasons...")
         self.seasons_amount = self.calculate_seasons_amount()
