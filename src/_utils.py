@@ -14,18 +14,18 @@ def download_episode(location, url, cookies):
     file_size = int(requests.head(url, cookies=cookies).headers['Content-Length'])
     log("File size: " + str(int(file_size / MB)) + "MB")
     downloaded = 0
-    startProgress("Downloading")
+    ProgressBar.startProgress("Downloading")
     try:
         with requests.get(url, cookies=cookies, stream=True) as r:
             r.raise_for_status()
             with open(location, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192): 
                     downloaded += f.write(chunk)
-                    progress(downloaded / file_size * 100)
+                    ProgressBar.progress(downloaded / file_size * 100)
     except:
         log("Download failed. Try again.")
     else:
-        endProgress()
+        ProgressBar.endProgress()
         log('Done.')
 
 
@@ -78,19 +78,24 @@ def select_folder():
 def hebrew_string(s):
     return '\n'.join([' '.join(i.split(' ')[::-1]) for i in s.split('\n')])
 
-def startProgress(title):
-    global progress_x
-    sys.stdout.write(title + ": [" + "-"*40 + "]" + chr(8)*41)
-    sys.stdout.flush()
+
+class ProgressBar:
     progress_x = 0
+    
+    @classmethod
+    def startProgress(cls, title):
+        sys.stdout.write(title + ": [" + "-"*40 + "]" + chr(8)*41)
+        sys.stdout.flush()
+        cls.progress_x = 0
 
-def progress(x):
-    global progress_x
-    x = int(x * 40 // 100)
-    sys.stdout.write("#" * (x - progress_x))
-    sys.stdout.flush()
-    progress_x = x
-
-def endProgress():
-    sys.stdout.write("#" * (40 - progress_x) + "]\n")
-    sys.stdout.flush()
+    @classmethod
+    def progress(cls, x):
+        x = int(x * 40 // 100)
+        sys.stdout.write("#" * (x - cls.progress_x))
+        sys.stdout.flush()
+        cls.progress_x = x
+    
+    @classmethod
+    def endProgress(cls):
+        sys.stdout.write("#" * (40 - cls.progress_x) + "]\n")
+        sys.stdout.flush()

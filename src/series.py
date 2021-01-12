@@ -6,9 +6,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from _utils import download_episode, log
+from _utils import download_episode, log, ProgressBar
 
-from consts.consts import VIDEO_HTML_ID
+from consts.consts import VIDEO_HTML_ID, WAIT_FPS
 
 class Series:
     def __init__(self, first_episode_url):
@@ -66,26 +66,29 @@ class Series:
     def wrap_episode(self, season, episode):
         return f"{self.series_url}/season/{season}/episode/{episode}"
 
-    def navigate(self, url, delay=0):
+    def navigate(self, url):
         self.driver.get(url)
-        sleep(delay)
 
     def download_episode(self, season, episode, location):
         log("Waiting for episode to load...")
         self.navigate(self.wrap_episode(season, episode))
         log("Done.")
-
-        log("Finding and clicking the proceed button (might take about 30 seconds)...")
         tries_left = 5
         while True:
             try:
                 tries_left -= 1
-                WebDriverWait(self.driver, 40).until(ec.element_to_be_clickable((By.ID, "proceed")))
+                ProgressBar.startProgress('Loading episode')
+                for i in range(WAIT_FPS * 30):
+                    sleep(1 / WAIT_FPS)
+                    ProgressBar.progress((i + 11) / (WAIT_FPS * 30) * 100)
+                ProgressBar.endProgress()
+                WebDriverWait(self.driver, 10).until(ec.element_to_be_clickable((By.ID, "proceed")))
             except TimeoutException:
                 if tries_left == 0:
                     log("Time out. Skipping this episode.")
                     return
                 log(f"Error. Trying again {tries_left} more times. Refreshing...")
+                # Hard refresh (Ctrl + F5)
                 self.driver.execute_script("location.reload(true);")
             else:
                 break
