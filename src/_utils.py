@@ -4,8 +4,8 @@ from datetime import datetime
 import os
 import tkinter as tk
 from tkinter import filedialog
-from consts.strings import *
-from consts.consts import *
+from consts.strings import CHOOSE_DIR
+from consts.consts import MB, DEFAULT_DIR, HOME_PATH
 import sys
 
 

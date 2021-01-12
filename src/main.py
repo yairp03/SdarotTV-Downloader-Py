@@ -4,27 +4,28 @@ from _utils import get_chrome_version, log, clear, create_dir, select_folder, he
 from shutil import copyfile
 import easygui
 import re
-from consts.strings import *
-from consts.consts import *
+from consts.strings import WELCOME_MESSAGE, URL_MESSAGE, MENU, CHOOSE_SEASON, CHOOSE_EPISODE
+from consts.consts import DL_EPISODE, DL_SEASON, DL_SERIES, CHANGE_SERIES, DRIVER_NAME
 
 
 def main():
+    initialize_driver()
+    series = Series()
     while True:
         clear()
         print(WELCOME_MESSAGE)
         series_name = ''
         success = False
-        initialize_driver()
         while not success:
             series_name = easygui.enterbox(hebrew_string(URL_MESSAGE))
             if series_name == None:
                 exit()
             else:
                 series_name = series_name.strip()
-            try:    
-                series = Series(series_name)
-            except:
-                log("Invalid series name. Try again.")
+            try:
+                series.change_series(series_name)
+            except Exception as e:
+                log("Invalid series name. Try again." + str(e))
             else:
                 success = True
         choice = take_choice(DL_EPISODE, CHANGE_SERIES, txt=MENU)
@@ -36,7 +37,7 @@ def main():
             elif choice == DL_SERIES:
                 download_series(series)
             choice = take_choice(DL_EPISODE, CHANGE_SERIES, txt=MENU)
-        series.driver.quit()
+    series.driver.quit()
 
 
 def take_choice(min_option, max_option, txt=''):
@@ -55,7 +56,7 @@ def download_episode(series, season=0, episode=0, location=None):
         season = take_choice(1, series.seasons_amount, txt=CHOOSE_SEASON)
         log(f"Season selected: {season}")
     if episode == 0:
-        episode = take_choice(1, series.episodes_amount[season], txt=CHOOSE_EPISODE)
+        episode = take_choice(1, series.get_episodes_amount(season), txt=CHOOSE_EPISODE)
         log(f"Episode selected: {episode}")
     if not location:
         location = select_folder()
@@ -68,7 +69,7 @@ def download_season(series, season=0, location=None):
         log(f"Season chosed: {season}")
     if not location:
         location = select_folder()
-    for episode in range(1, series.episodes_amount[season] + 1):
+    for episode in range(1, series.get_episodes_amount(season) + 1):
         download_episode(series, season, episode, location)
 
 

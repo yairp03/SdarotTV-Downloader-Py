@@ -18,7 +18,8 @@ SERIES_NAME_XPATH = '//*[@id="watchEpisode"]/div[1]/div/h1/strong/span'
 MB = 1_000_000
 
 WAIT_FPS = 5
+LOADING_TIME = 32
 
 SITE_URL = 'https://sdarot.space/'
-WATCH_URL = SITE_URL + 'watch/'
-SEARCH_URL = SITE_URL + 'search/'
+WATCH_URL = SITE_URL + 'watch'
+SEARCH_URL = SITE_URL + 'search'
