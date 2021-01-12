@@ -49,7 +49,7 @@ class Series:
         return "/".join(self.series_url.split("/")[:-2]) + "/"
 
     def calculate_seasons_amount(self):
-        self.navigate(self.wrap_episode(1, 1), 0)
+        self.navigate(self.wrap_episode(1, 1))
         return int(
             self.driver.find_element_by_id("season").text.split("\n")[-1]
         )
