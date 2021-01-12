@@ -5,26 +5,30 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 
 from _utils import download_episode, log, ProgressBar
 
-from consts.consts import VIDEO_HTML_ID, WAIT_FPS
+from consts.consts import VIDEO_HTML_ID, SEARCH_BAR_ID, SERIES_NAME_XPATH, WAIT_FPS, SITE_URL, WATCH_URL, SEARCH_URL
 
 class Series:
-    def __init__(self, first_episode_url):
+    def __init__(self, series_name):
         log("Creating Driver...")
         options = webdriver.ChromeOptions()
         options.add_argument("headless")
         self.driver = webdriver.Chrome(options=options)
         log("Done.")
-        log("Extracting series url from given url...")
-        self.series_url = self.extract_series_url(first_episode_url)
+        
+        self.site_url = SITE_URL
+        log("Site url is: " + self.site_url)
+        
+        log("Finding series url...")
+        self.series_url = self.find_series_url(series_name)
         log("Done. Series url is: " + self.series_url)
-
-        log("Extracting site url from given url...")
-        self.site_url = self.extract_site_url()
-        log("Done. Site url is: " + self.site_url)
-
+        
+        log("Finding series name...")
+        self.series_name = self.find_series_name()
+        
         log("Calculating amount of seasons...")
         self.seasons_amount = self.calculate_seasons_amount()
         log(f"Done. There are {self.seasons_amount} seasons.")
@@ -34,19 +38,18 @@ class Series:
         self.calculate_episodes_amount()
         log(f"Done.")
 
-    def print_data(self):
-        log("driver: ", self.driver)
-        log("site_url: ", self.site_url)
-        log("series_url: ", self.series_url)
-        log("seasons_amount: ", self.seasons_amount)
-        log("episodes_amount: ", self.episodes_amount)
-
-    @staticmethod
-    def extract_series_url(first_episode_url):
-        return "/".join(first_episode_url.split("/")[:-4])
-
-    def extract_site_url(self):
-        return "/".join(self.series_url.split("/")[:-2]) + "/"
+    def find_series_url(self, series_name):
+        self.navigate(self.site_url)
+        self.driver.find_element_by_id(SEARCH_BAR_ID).send_keys(series_name + Keys.ENTER)
+        if self.driver.current_url.startswith(SEARCH_URL):
+            log("Not supporting search yet.")
+            raise NotImplementedError()
+        return self.driver.current_url
+    
+    def find_series_name(self):
+        self.navigate(self.series_url)
+        series_name = self.driver.find_element_by_xpath(SERIES_NAME_XPATH).text
+        return series_name
 
     def calculate_seasons_amount(self):
         self.navigate(self.wrap_episode(1, 1))
@@ -92,14 +95,13 @@ class Series:
                 self.driver.execute_script("location.reload(true);")
             else:
                 break
-        proceed_btn = self.driver.find_element_by_id("proceed")
-        proceed_btn.click()
+            # Click proceed Button
+        self.driver.find_element_by_id("proceed").click()
         log("Done.")
 
         log("Finding Video...")
-        video = self.driver.find_element_by_id(VIDEO_HTML_ID)
-        url = video.get_attribute("src")
-        log(f"Done. Url is: {url}")
+        url = self.driver.find_element_by_id(VIDEO_HTML_ID).get_attribute("src")
+        log(f"Done. Video url is: {url}")
 
         log("Getting cookies...")
         cookies_dict = {}

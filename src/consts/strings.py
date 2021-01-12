@@ -6,9 +6,9 @@ MENU = """\
 
 WELCOME_MESSAGE = "Hi! Welcome to the Sdarot TV Downloader."
 URL_MESSAGE = f"""\
-הכנס לינק לפרק *הראשון* של הסדרה אותה תרצה להוריד
+הכנס את שם הסדרה אותה תרצה להוריד באנגלית כמו שכתוב באתר
 לדוגמה
-https://sdarot.space/watch/$series$/season/1/episode/1
+Simpsons The
 יש להעביר את המקלדת לאנגלית בעזרת Alt+Shift
 כדי להדביק יש ללחוץ על Ctrl+V"""
 

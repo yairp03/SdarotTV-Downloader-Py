@@ -12,15 +12,21 @@ def main():
     while True:
         clear()
         print(WELCOME_MESSAGE)
-        first_episode_url = ''
-        while not re.findall(URL_REGEX_PATTERN, first_episode_url):
-            first_episode_url = easygui.enterbox(hebrew_string(URL_MESSAGE))
-            if first_episode_url == None:
+        series_name = ''
+        success = False
+        initialize_driver()
+        while not success:
+            series_name = easygui.enterbox(hebrew_string(URL_MESSAGE))
+            if series_name == None:
                 exit()
             else:
-                first_episode_url = first_episode_url.strip()
-        initialize_driver()
-        series = Series(first_episode_url)
+                series_name = series_name.strip()
+            try:    
+                series = Series(series_name)
+            except:
+                log("Invalid series name. Try again.")
+            else:
+                success = True
         choice = take_choice(DL_EPISODE, CHANGE_SERIES, txt=MENU)
         while choice != CHANGE_SERIES:
             if choice == DL_EPISODE:
