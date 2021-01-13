@@ -6,7 +6,7 @@ import easygui
 import re
 from consts.strings import WELCOME_MESSAGE, URL_MESSAGE, MENU, CHOOSE_SEASON, CHOOSE_EPISODE
 from consts.consts import DL_EPISODE, DL_SEASON, DL_SERIES, CHANGE_SERIES, DRIVER_NAME
-
+import sys
 
 def main():
     initialize_driver()
@@ -19,7 +19,7 @@ def main():
         while not success:
             series_name = easygui.enterbox(hebrew_string(URL_MESSAGE))
             if series_name == None:
-                exit()
+                sys.exit()
             else:
                 series_name = series_name.strip()
             try:
@@ -45,7 +45,7 @@ def take_choice(min_option, max_option, txt=''):
     while not (choice.isnumeric() and min_option <= int(choice) <= max_option):
         choice = easygui.enterbox(hebrew_string(txt) + f"Enter your choice ({min_option}-{max_option}): ")
         if choice == None:
-            exit()
+            sys.exit()
         else:
             choice = choice.strip()
     return int(choice)
