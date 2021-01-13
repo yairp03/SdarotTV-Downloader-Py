@@ -86,16 +86,17 @@ class Series:
         self._episodes_amount = {}
 
     def download_episode(self, season, episode, location):
+        log(f"Starting process for season {season} episode {episode}...")
         self.navigate(self.wrap_episode(season, episode))
         tries_left = 5
         while True:
             try:
                 tries_left -= 1
-                ProgressBar.startProgress('Loading episode')
+                pb = ProgressBar('Loading episode')
                 for i in range(WAIT_FPS * LOADING_TIME):
                     sleep(1 / WAIT_FPS)
-                    ProgressBar.progress((i + 1) / (WAIT_FPS * LOADING_TIME) * 100)
-                ProgressBar.endProgress()
+                    pb.progress((i + 1) / (WAIT_FPS * LOADING_TIME) * 100)
+                pb.endProgress()
                 WebDriverWait(self.driver, 10).until(ec.element_to_be_clickable((By.ID, "proceed")))
             except TimeoutException:
                 if tries_left == 0:

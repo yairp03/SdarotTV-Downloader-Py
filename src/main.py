@@ -65,8 +65,8 @@ def download_episode(series, season=0, episode=0, location=None):
 
 def download_season(series, season=0, location=None):
     if season == 0:
-        season = take_choice(1, series.seasons_amount, txt="Choose season:\n")
-        log(f"Season chosed: {season}")
+        season = take_choice(1, series.seasons_amount, txt=CHOOSE_SEASON)
+        log(f"Season selected: {season}")
     if not location:
         location = select_folder()
     for episode in range(1, series.get_episodes_amount(season) + 1):

@@ -20,6 +20,8 @@ MB = 1_000_000
 WAIT_FPS = 5
 LOADING_TIME = 32
 PROGRESS_BAR_CHAR = '█'
+PROGRESS_BAR_LEN = 400
+TK_PAD = 50
 
 SITE_URL = 'https://sdarot.space/'
 WATCH_URL = SITE_URL + 'watch'

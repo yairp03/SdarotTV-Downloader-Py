@@ -3,9 +3,10 @@ from win32com.client import Dispatch
 from datetime import datetime
 import os
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter import filedialog
 from consts.strings import CHOOSE_DIR
-from consts.consts import MB, DEFAULT_DIR, HOME_PATH, PROGRESS_BAR_CHAR
+from consts.consts import MB, DEFAULT_DIR, HOME_PATH, PROGRESS_BAR_CHAR, PROGRESS_BAR_LEN, TK_PAD
 import sys
 
 
@@ -14,18 +15,18 @@ def download_episode(location, url, cookies):
     file_size = int(requests.head(url, cookies=cookies).headers['Content-Length'])
     log("File size: " + str(int(file_size / MB)) + "MB")
     downloaded = 0
-    ProgressBar.startProgress("Downloading")
+    pb = ProgressBar("Downloading")
     try:
         with requests.get(url, cookies=cookies, stream=True) as r:
             r.raise_for_status()
             with open(location, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192): 
                     downloaded += f.write(chunk)
-                    ProgressBar.progress(downloaded / file_size * 100)
+                    pb.progress(downloaded / file_size * 100)
     except:
         log("Download failed. Try again.")
     else:
-        ProgressBar.endProgress()
+        pb.endProgress()
         log('Done.')
 
 
@@ -67,6 +68,7 @@ def select_folder():
     location = filedialog.askdirectory(
         parent=root, initialdir=HOME_PATH, title=CHOOSE_DIR
     )
+    root.destroy()
     if location != '':
         log(f"Done. Folder: {location}")
         return location
@@ -80,22 +82,23 @@ def hebrew_string(s):
 
 
 class ProgressBar:
-    progress_x = 0
     
-    @classmethod
-    def startProgress(cls, title):
-        sys.stdout.write(title + ": [" + "-"*40 + "]" + chr(8)*41)
-        sys.stdout.flush()
-        cls.progress_x = 0
-
-    @classmethod
-    def progress(cls, x):
-        x = int(x * 40 // 100)
-        sys.stdout.write(PROGRESS_BAR_CHAR * (x - cls.progress_x))
-        sys.stdout.flush()
-        cls.progress_x = x
+    def __init__(self, title):
+        self.root = tk.Tk()
+        self.root.title(title)
+        self.root.geometry(str(PROGRESS_BAR_LEN + TK_PAD) + "x45")
+        self.progress_bar = ttk.Progressbar(self.root, orient=tk.HORIZONTAL, length=PROGRESS_BAR_LEN, mode='determinate')
+        self.progress_bar.pack(pady=10)
+        self.root.update()
+        self.progress_x = 0
     
-    @classmethod
-    def endProgress(cls):
-        sys.stdout.write(PROGRESS_BAR_CHAR * (40 - cls.progress_x) + "]\n")
-        sys.stdout.flush()
+    def progress(self, x):
+        self.progress_bar['value'] = x
+        self.root.update()
+        self.progress_x = x
+    
+    def endProgress(self):
+        self.root.destroy()
+        self.root = None
+        del self.progress_bar
+        self.progress_bar = None
