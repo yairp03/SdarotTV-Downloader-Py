@@ -5,7 +5,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 from consts.strings import CHOOSE_DIR
-from consts.consts import MB, DEFAULT_DIR, HOME_PATH
+from consts.consts import MB, DEFAULT_DIR, HOME_PATH, PROGRESS_BAR_CHAR
 import sys
 
 
@@ -91,11 +91,11 @@ class ProgressBar:
     @classmethod
     def progress(cls, x):
         x = int(x * 40 // 100)
-        sys.stdout.write("#" * (x - cls.progress_x))
+        sys.stdout.write(PROGRESS_BAR_CHAR * (x - cls.progress_x))
         sys.stdout.flush()
         cls.progress_x = x
     
     @classmethod
     def endProgress(cls):
-        sys.stdout.write("#" * (40 - cls.progress_x) + "]\n")
+        sys.stdout.write(PROGRESS_BAR_CHAR * (40 - cls.progress_x) + "]\n")
         sys.stdout.flush()
