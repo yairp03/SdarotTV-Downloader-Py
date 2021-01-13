@@ -60,6 +60,19 @@ def create_dir(path):
     else:
         log(f"Successfully created the directory {path}.")
 
+def parse_config_file(config_name, config_vars):
+    try:
+        with open(config_name) as f:
+            config_file_vars = dict([c.split('=') for c in f.read().strip().split('\n') if '=' in c])
+            for v in config_vars:
+                if v in config_file_vars:
+                    config_vars[v] = bool(int(config_file_vars[v])) if config_file_vars[v].isnumeric() else config_file_vars[v]
+    except:
+        print("Problem with config file. Using default values.")
+    
+    config_vars['site'] = f"https://{config_vars['site']}/"
+    return config_vars
+
 
 def select_folder():
     root = tk.Tk()

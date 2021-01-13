@@ -10,6 +10,7 @@ CHANGE_SERIES = 4
 
 URL_REGEX_PATTERN = r'https?:\/\/.+\/watch\/.*\/season\/[0-9]+\/episode\/[0-9]+'
 DRIVER_NAME = 'chromedriver.exe'
+CONFIG_NAME = 'config.txt'
 
 VIDEO_HTML_ID = 'videojs_html5_api'
 SEARCH_BAR_ID = 'liveSearch'
@@ -23,6 +24,13 @@ PROGRESS_BAR_CHAR = '█'
 PROGRESS_BAR_LEN = 400
 TK_PAD = 50
 
-SITE_URL = 'https://sdarot.space/'
-WATCH_URL = SITE_URL + 'watch'
-SEARCH_URL = SITE_URL + 'search'
+def WATCH_URL(SITE_URL):
+    return SITE_URL + 'watch'
+
+def SEARCH_URL(SITE_URL):
+    return SITE_URL + 'search'
+
+DEFAULT_CONFIG_VARS = {
+    'site': 'sdarot.space',
+    'headless': True
+}

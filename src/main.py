@@ -1,16 +1,17 @@
 import os
 from series import Series
-from _utils import get_chrome_version, log, clear, create_dir, select_folder, hebrew_string
+from _utils import get_chrome_version, log, clear, create_dir, select_folder, hebrew_string, parse_config_file
 from shutil import copyfile
 import easygui
 import re
 from consts.strings import WELCOME_MESSAGE, URL_MESSAGE, MENU, CHOOSE_SEASON, CHOOSE_EPISODE
-from consts.consts import DL_EPISODE, DL_SEASON, DL_SERIES, CHANGE_SERIES, DRIVER_NAME
+from consts.consts import DL_EPISODE, DL_SEASON, DL_SERIES, CHANGE_SERIES, DRIVER_NAME, CONFIG_NAME, DEFAULT_CONFIG_VARS
 import sys
 
 def main():
+    config_vars = parse_config_file(CONFIG_NAME, DEFAULT_CONFIG_VARS)
     initialize_driver()
-    series = Series()
+    series = Series(config_vars['site'], config_vars['headless'])
     while True:
         clear()
         print(WELCOME_MESSAGE)

@@ -9,17 +9,18 @@ from selenium.webdriver.common.keys import Keys
 
 from _utils import download_episode, log, ProgressBar
 
-from consts.consts import VIDEO_HTML_ID, SEARCH_BAR_ID, SERIES_NAME_XPATH, WAIT_FPS, SITE_URL, WATCH_URL, SEARCH_URL, LOADING_TIME
+from consts.consts import VIDEO_HTML_ID, SEARCH_BAR_ID, SERIES_NAME_XPATH, WAIT_FPS, WATCH_URL, SEARCH_URL, LOADING_TIME
 
 class Series:
-    def __init__(self):
+    def __init__(self, site_url, headless: bool):
         log("Creating Driver...")
         options = webdriver.ChromeOptions()
-        options.add_argument("headless")
+        if headless:
+            options.add_argument("headless")
         self.driver = webdriver.Chrome(options=options)
         log("Done.")
         
-        self.site_url = SITE_URL
+        self.site_url = site_url
         log("Site url is: " + self.site_url)
         
         self.series_url = ''
@@ -33,7 +34,7 @@ class Series:
     def find_series_url(self, series_name):
         self.navigate(self.site_url)
         self.driver.find_element_by_id(SEARCH_BAR_ID).send_keys(series_name + Keys.ENTER)
-        if self.driver.current_url.startswith(SEARCH_URL):
+        if self.driver.current_url.startswith(SEARCH_URL(self.site_url)):
             log("Not supporting search yet.")
             raise NotImplementedError()
         return self.driver.current_url
